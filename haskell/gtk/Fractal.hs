@@ -1,6 +1,6 @@
 module Fractal where
 
-type Point = (Float, Float)
+type Point = (Double, Double)
 type MyColor = Int
 
 {-
@@ -41,7 +41,7 @@ The general idea is:
  -
  - This will return a point (x, y)
  -}
-convertPoint :: Float -> Float -> (Point, Point) -> Point -> Point
+convertPoint :: Double -> Double -> (Point, Point) -> Point -> Point
 convertPoint w h ((wMin, wMax), (hMin, hMax)) (x,y) = do
     let wMag = wMax - wMin
     let hMag = hMax - hMin
@@ -61,19 +61,21 @@ convertPoint w h ((wMin, wMax), (hMin, hMax)) (x,y) = do
  -
  - threshold - The number of iterations for the recursive function
  -}
-mandelbrot :: Float -> Float -> Int -> [(Point, MyColor)]
+mandelbrot :: Double -> Double -> Int -> [(Point, MyColor)]
 mandelbrot w h threshold = do
     let points = getPoints w h
+    --let cPoints = map (convertPoint w h ((-2.0, 2.0), (-2.0, 2.0))) points
     let cPoints = map (convertPoint w h ((-2.0, 2.0), (-2.0, 2.0))) points
     let colors = map (inMandelbrot threshold) cPoints
     zip points colors
 
 inMandelbrot :: Int -> Point -> Int
 inMandelbrot threshold p = do
-    let points = take threshold (iterate (calcMandelbrot (0, 0)) p)
+    --let points = take threshold (iterate (calcMandelbrot (0, 0)) p)
+    let points = take threshold (iterate (calcMandelbrot p) (0, 0))
     length $ takeWhile (<= 4) (map dist points)
 
-dist :: Point -> Float
+dist :: Point -> Double
 dist (x, y) = x*x + y*y
 
 {--
@@ -83,10 +85,12 @@ dist (x, y) = x*x + y*y
  - 2uv, y -> imaginary part
  -}
 calcMandelbrot :: Point -> Point -> Point
---calcMandelbrot (x, y) (u, v) = (u*u - v*v + x, 2*u*v + y)
-calcMandelbrot (u, v) (x,y) = (u*u - v*v + x, 2*u*v + y)
+calcMandelbrot (x, y) (u, v) = (u*u - v*v + x, 2*u*v + y)
+--calcMandelbrot (u, v) (x,y) = (u*u - v*v + x, 2*u*v + y)
+--calcMandelbrot (u, v) (x,y) = (x*x - y*y + u, 2*x*y + v)
 
-getPoints :: Float -> Float -> [Point]
+
+getPoints :: Double -> Double -> [Point]
 getPoints w h = [(x, y) | x <- [0..(w - 1)], y <- [0..(h - 1)]]
 
 -- plot [Points MyColor]
