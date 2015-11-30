@@ -30,11 +30,8 @@ main = do
 
 myDraw :: Render ()
 myDraw = do
-    let points = mandelbrot Main.width Main.height threshold
-
+    let points = mandelbrot threshold Main.width Main.height
     mapM_ drawPixel points
-
-    --Graphics.Rendering.Cairo.rectangle 0 0 1 1
     stroke
 
 drawPixel :: (Fractal.Point, Fractal.MyColor) -> Render ()
@@ -43,7 +40,6 @@ drawPixel (point,c) = do
     let py = snd(point)
     setLineWidth 1
     setColor c
-    --setSourceRGB 0 0 (realToFrac c)
     Graphics.Rendering.Cairo.rectangle px py 1 1
     stroke
 
